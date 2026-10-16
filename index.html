@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ug" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ئۇيغۇرچە كۆركەم سىيرىلما تىزىملىك | Uyghur Sidebar Menu</title>
+  
+  <!-- Google Fonts: Noto Sans Arabic (مۇكەممەل ئۇيغۇرچە خەت نۇسخىسى قوللىشى بار) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- تەگلىك بېزەك شارلىرى -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- ئاساسىي كۆرۈنۈش رامكىسى -->
+  <div class="app-layout">
+    
+    <!-- يان تىزىملىك (Sidebar Card) -->
+    <aside class="sidebar-card" id="sidebar">
+      
+      <!-- تىزىملىك بېشى (Header) -->
+      <div class="sidebar-header">
+        <div class="brand-wrapper">
+          <div class="logo-box" id="logoBox" role="button" tabindex="0" title="لوگونى بېسىپ تىزىملىكنى كېڭەيتىڭ">
+            <span class="logo-letter">N</span>
+          </div>
+          <div class="brand-text">
+            <h1 class="brand-title">Netflix</h1>
+            <span class="brand-subtitle">خالىغان جايدا كۆرۈڭ</span>
+          </div>
+        </div>
+        
+        <!-- يىغىش / كېڭەيتىش كۇنۇپكىسى (قايتىش) -->
+        <button class="collapse-btn" id="collapseBtn" aria-label="تىزىملىكنى يىغىش" title="قايتىش / كىچىكلىتىش">
+          <span class="collapse-text">قايتىش</span>
+          <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- ھەرىكەتلىك نۇقتىلىق يۆتكىلىشچان قەۋەت (Sliding Active Pill Indicator) -->
+      <div class="sliding-indicator" id="slidingIndicator"></div>
+
+      <!-- تىزىملىك مەزمۇنلىرى رايونى -->
+      <div class="menu-content" id="menuContent">
+
+        <!-- 1-گۇرۇپپا: تىزىملىك (Menu) -->
+        <div class="menu-section">
+          <span class="section-title">تىزىملىك</span>
+          <nav class="nav-list">
+            
+            <a href="#home" class="nav-item active" data-id="home">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </span>
+              <span class="nav-label">باش بەت</span>
+            </a>
+
+            <a href="#continue" class="nav-item" data-id="continue">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </span>
+              <span class="nav-label">داۋاملىق كۆرۈش</span>
+            </a>
+
+            <a href="#mylist" class="nav-item" data-id="mylist">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </span>
+              <span class="nav-label">كۆرۈش تىزىملىكىم</span>
+              <span class="nav-badge">7</span>
+            </a>
+
+            <a href="#series" class="nav-item" data-id="series">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="15" rx="3" ry="3"></rect>
+                  <polyline points="17 2 12 7 7 2"></polyline>
+                </svg>
+              </span>
+              <span class="nav-label">تىياتىرلار</span>
+            </a>
+
+            <a href="#movies" class="nav-item" data-id="movies">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="2.5" ry="2.5"></rect>
+                  <line x1="7" y1="2" x2="7" y2="22"></line>
+                  <line x1="17" y1="2" x2="17" y2="22"></line>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <line x1="2" y1="7" x2="7" y2="7"></line>
+                  <line x1="2" y1="17" x2="7" y2="17"></line>
+                  <line x1="17" y1="17" x2="22" y2="17"></line>
+                  <line x1="17" y1="7" x2="22" y2="7"></line>
+                </svg>
+              </span>
+              <span class="nav-label">كىنولار</span>
+            </a>
+
+            <a href="#games" class="nav-item" data-id="games">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="6" y1="12" x2="10" y2="12"></line>
+                  <line x1="8" y1="10" x2="8" y2="14"></line>
+                  <line x1="15" y1="13" x2="15.01" y2="13"></line>
+                  <line x1="18" y1="11" x2="18.01" y2="11"></line>
+                  <rect x="2" y="6" width="20" height="12" rx="6"></rect>
+                </svg>
+              </span>
+              <span class="nav-label">ئويۇنلار</span>
+            </a>
+
+          </nav>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <!-- 2-گۇرۇپپا: بايقاش (Discovery) -->
+        <div class="menu-section">
+          <span class="section-title">بايقاش</span>
+          <nav class="nav-list">
+
+            <a href="#releases" class="nav-item" data-id="releases">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                  <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                  <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                  <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                </svg>
+              </span>
+              <span class="nav-label">يېڭى كەلگەنلەر</span>
+            </a>
+
+            <a href="#popular" class="nav-item" data-id="popular">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </span>
+              <span class="nav-label">ئالقىشلانغانلار</span>
+            </a>
+
+          </nav>
+        </div>
+
+        <div class="menu-divider"></div>
+
+        <!-- 3-گۇرۇپپا: تەڭشەك ۋە چىقىش (Settings & Logout) -->
+        <div class="menu-section">
+          <nav class="nav-list">
+
+            <a href="#settings" class="nav-item" data-id="settings">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </span>
+              <span class="nav-label">تەڭشەك</span>
+            </a>
+
+            <a href="#logout" class="nav-item text-danger" data-id="logout">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </span>
+              <span class="nav-label">چېكىنىش</span>
+            </a>
+
+          </nav>
+        </div>
+
+      </div>
+
+      <!-- كونترول تاختىسى (پاسون، تېما ۋە ئاۋاز ئالماشتۇرۇش) -->
+      <div class="sidebar-footer">
+        <button class="footer-action-btn" id="styleModeToggle" title="پاسون ئالماشتۇرۇش: ئىچىگە كىرگەن (چۆكمە) / قىزىل لەيلىمە">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+
+        <button class="footer-action-btn" id="themeToggle" title="كۈندۈز / كېچە نۇسخىسىنى ئالماشتۇرۇش">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

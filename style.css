@@ -1,0 +1,791 @@
+/* =========================================================
+   ئۇيغۇرچە سىيرىلما كۆركەم تىزىملىك (Uyghur Animated Sidebar Menu)
+   ئەسلى لايىھە: Code with Nazia (Netflix Menu UI Animation)
+   تولۇق ئۇيغۇرچە RTL، نەپىس خەت نۇسخىسى ۋە ئەقلىي ئىقتىدارلىق سىيرىلىش ئۈنۈمى
+   ========================================================= */
+
+:root {
+  /* رەڭلەر سىستېمىسى (كۈندۈز ھالىتى) */
+  --bg-canvas: #e8ecf2;
+  --card-bg: #edf1f7;
+  --card-border: rgba(255, 255, 255, 0.9);
+  --card-shadow: 0 24px 60px -12px rgba(0, 24, 60, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+  
+  --primary-red: #b81d24;
+  --primary-red-bright: #e50914;
+  --primary-glow: rgba(184, 29, 36, 0.35);
+  
+  --text-main: #232832;
+  --text-muted: #808b9c;
+  --text-light: #ffffff;
+  --divider-color: #dbe2ec;
+  
+  --item-hover-bg: rgba(0, 0, 0, 0.025);
+  --logo-box-bg: #f4f6fa;
+  --logo-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), inset 0 2px 3px rgba(255, 255, 255, 0.95);
+  
+  /* چۆكمە (ئىچىگە كىرگەن) نۇمورفىزم كۆلەڭگىلىرى - Inset Neumorphic */
+  --inset-bg: #e6ebf2;
+  --inset-shadow: inset 3px 3px 6px rgba(155, 170, 192, 0.68), 
+                  inset -3px -3px 6px rgba(255, 255, 255, 0.95),
+                  inset 0 1px 2px rgba(0, 0, 0, 0.08);
+  
+  /* خەت نۇسخىسى */
+  --font-uyghur: 'Noto Sans Arabic', 'UKIJ Tuz', 'ALKATIP', 'Microsoft Uighur', Tahoma, sans-serif;
+  --font-latin: 'Outfit', sans-serif;
+  
+  /* ئۆلچەملەر */
+  --sidebar-width: 290px;
+  --sidebar-collapsed-width: 82px;
+  --radius-card: 28px;
+  --radius-item: 20px;
+  --transition-smooth: 0.36s cubic-bezier(0.34, 1.4, 0.64, 1);
+  --transition-fast: 0.2s ease;
+}
+
+/* تېما: كېچە نۇسخىسى (Dark Mode) */
+body.dark-mode {
+  --bg-canvas: #0e1117;
+  --card-bg: #161a23;
+  --card-border: rgba(255, 255, 255, 0.07);
+  --card-shadow: 0 24px 60px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  
+  --text-main: #f1f5f9;
+  --text-muted: #64748b;
+  --divider-color: #232936;
+  
+  --item-hover-bg: rgba(255, 255, 255, 0.04);
+  --logo-box-bg: #1e2430;
+  --logo-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+
+  /* كېچە نۇسخىسىدىكى چۆكمە كۆلەڭگە */
+  --inset-bg: #11141c;
+  --inset-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.85), 
+                  inset -2px -2px 6px rgba(255, 255, 255, 0.06),
+                  inset 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* دەسلەپكى تەڭشەك */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-uyghur);
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start; /* ئۇيغۇرچە RTL دە دەل ئوڭ تەرەپتىن باشلىنىدۇ */
+  direction: rtl; /* ئەپ يۈزىنىڭ ئوڭ تەرىپىگە پۈتۈنلەي توغرىلاش */
+  overflow-x: hidden;
+  transition: background-color var(--transition-fast);
+}
+
+/* تەگلىك يورۇقلۇق نۇرى */
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  transition: opacity var(--transition-fast);
+}
+
+.glow-1 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(229, 9, 20, 0.15) 0%, transparent 70%);
+  top: 10%;
+  right: 10%;
+}
+
+.glow-2 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, transparent 70%);
+  bottom: 10%;
+  left: 15%;
+}
+
+/* ئورۇنلاشتۇرۇش رامكىسى - پەقەت ئوڭ تەرەپتىكى تىزىملىكلا تۇرىدۇ */
+.app-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  width: auto;
+  margin: 0;
+}
+
+/* =========================================================
+   يان تىزىملىك كارتىسى (Floating Sidebar Card)
+   ئەپ يۈزىنىڭ ئوڭ تەرىپىنى تولۇق ئىگىلەيدۇ، ئاستىدا باشقا نەرسە چىقمايدۇ
+   ========================================================= */
+.sidebar-card {
+  direction: rtl; /* تىزىملىكنىڭ ئىچكى قىسمى ساپ ئۇيغۇرچە ئوڭدىن سولغا بولىدۇ */
+  position: relative;
+  width: var(--sidebar-width);
+  min-height: calc(100vh - 48px); /* بويى ئېكران بويىچە تولۇق تۇشىدۇ */
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--card-shadow);
+  padding: 24px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+  transition: width var(--transition-smooth), transform var(--transition-smooth), background var(--transition-fast);
+  user-select: none;
+}
+
+/* 1. تىزىملىك بېشى (Header - تولۇق ئېچىلغان ھالەت) */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--logo-box-bg);
+  box-shadow: var(--logo-box-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.logo-box:hover {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.logo-letter {
+  font-family: var(--font-latin);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--primary-red);
+  letter-spacing: -0.5px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  white-space: nowrap;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.brand-title {
+  font-family: var(--font-latin);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+}
+
+/* يىغىش / كېڭەيتىش كۇنۇپكىسى (قايتىش) */
+.collapse-btn {
+  background: var(--logo-box-bg);
+  border: 1px solid var(--divider-color);
+  color: var(--text-muted);
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.collapse-text {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.collapse-btn:hover {
+  background: var(--item-hover-bg);
+  color: var(--primary-red);
+  border-color: rgba(229, 9, 20, 0.25);
+}
+
+.collapse-btn:hover .collapse-text {
+  color: var(--primary-red);
+}
+
+.chevron-icon {
+  width: 15px;
+  height: 15px;
+  transition: transform var(--transition-smooth);
+}
+
+/* تىزىملىك يىغىلغان (Collapsed Rail) ھالەت - رەسىمدىكىدەك تولۇق يۇمىلاق لەيلىمە قاپ */
+.sidebar-card.collapsed {
+  width: 72px;
+  padding: 18px 10px 16px;
+  border-radius: 36px;
+}
+
+.sidebar-card.collapsed .sidebar-header {
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.sidebar-card.collapsed .brand-wrapper {
+  gap: 0;
+  overflow: visible;
+}
+
+.sidebar-card.collapsed .brand-text {
+  display: none;
+}
+
+.sidebar-card.collapsed .logo-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar-card.collapsed .logo-box:hover {
+  transform: scale(1.12);
+  box-shadow: 0 4px 14px rgba(229, 9, 20, 0.25);
+}
+
+.sidebar-card.collapsed .logo-box:active {
+  transform: scale(0.95);
+}
+
+.sidebar-card.collapsed .logo-letter {
+  font-size: 20px;
+}
+
+.sidebar-card.collapsed .collapse-text {
+  display: none;
+}
+
+.sidebar-card.collapsed .collapse-btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.sidebar-card.collapsed .chevron-icon {
+  width: 14px;
+  height: 14px;
+  transform: rotate(180deg);
+}
+
+.sidebar-card.collapsed .nav-item {
+  width: 52px;
+  height: 50px;
+  margin: 0 auto;
+  padding: 0;
+  justify-content: center;
+  border-radius: 18px;
+}
+
+.sidebar-card.collapsed .nav-icon {
+  margin: 0;
+}
+
+.sidebar-card.collapsed .nav-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.sidebar-card.collapsed .nav-label {
+  display: none;
+}
+
+.sidebar-card.collapsed .nav-badge {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  left: auto;
+  width: 7px;
+  height: 7px;
+  min-width: 7px;
+  padding: 0;
+  font-size: 0;
+  border-radius: 50%;
+  background-color: var(--primary-red);
+  box-shadow: 0 0 0 2px var(--card-bg);
+}
+
+.sidebar-card.collapsed .menu-divider {
+  margin: 8px 6px;
+}
+
+.sidebar-card.collapsed .sidebar-footer {
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.sidebar-card.collapsed .footer-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+}
+
+/* =========================================================
+   ھەرىكەتچان چۆكمە كۆرسەتكۈچ (Sliding Inset Neumorphic Slot)
+   ئەسلى رەسىمدىكىدەك تۈر تاللانغاندا ئىچىگە كىرىپ كەتكەن ئۈنۈم
+   ========================================================= */
+.sliding-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 48px;
+  background: var(--inset-bg);
+  border-radius: var(--radius-item);
+  box-shadow: var(--inset-shadow);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: top var(--transition-smooth), 
+              left var(--transition-smooth),
+              width var(--transition-smooth),
+              height var(--transition-smooth), 
+              opacity 0.25s ease,
+              box-shadow var(--transition-fast),
+              background var(--transition-fast);
+}
+
+/* قىزىل لەيلىمە تاللاش شەكلى قوزغالغاندا (ئىختىيارىي نۇسخا) */
+.sidebar-card.theme-red-pill .sliding-indicator {
+  background: linear-gradient(135deg, var(--primary-red-bright) 0%, var(--primary-red) 100%);
+  box-shadow: 0 8px 22px var(--primary-glow);
+}
+
+/* =========================================================
+   مەزمۇن ۋە تۈرلەر تىزىملىكى (Menu Items)
+   ========================================================= */
+.menu-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: 12px;
+  margin-bottom: 8px;
+  margin-top: 4px;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.sidebar-card.collapsed .section-title {
+  opacity: 0;
+  height: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* بىر تال تىزىملىك تۈرى (Nav Item) */
+.nav-item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: var(--radius-item);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.22s ease, background-color 0.22s ease, transform 0.12s ease;
+  overflow: hidden;
+}
+
+.nav-item:hover:not(.active) {
+  background-color: var(--item-hover-bg);
+  color: var(--text-main);
+}
+
+.nav-item:hover:not(.active) .nav-icon {
+  transform: scale(1.1);
+  color: var(--primary-red);
+}
+
+.nav-item:active {
+  transform: scale(0.98);
+}
+
+/* ئاكتىپ چۆكمە ھالەتتىكى تۈر (رەسىمدىكىدەك ئىچىگە كىرگەن ھالەت) */
+.nav-item.active {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* تاللانغاندا بەلگىنىڭ رەڭگى رەسىمدىكىدەك قىزىل بولىدۇ ۋە چوڭىيىدۇ */
+.nav-item.active .nav-icon {
+  color: var(--primary-red);
+  transform: scale(1.15);
+}
+
+/* قىزىل پاسوندا بولسا خەتلەر ئاق بولىدۇ */
+.sidebar-card.theme-red-pill .nav-item.active {
+  color: var(--text-light);
+}
+
+.sidebar-card.theme-red-pill .nav-item.active .nav-icon {
+  color: var(--text-light);
+}
+
+/* تىزىملىك سىنبەلگىسى (Icon) */
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 14px;
+  color: inherit;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.22s ease;
+}
+
+.nav-icon svg {
+  width: 21px;
+  height: 21px;
+  transform-origin: center center;
+  transition: transform 0.25s ease;
+}
+
+/* =========================================================
+   بارلىق بەلگىلەرنىڭ تاللانغاندىكى جانلىق ھەرىكەتلىرى (Icon Animations)
+   ========================================================= */
+
+/* باش بەت (Home) - سەكرەش ھەرىكىتى */
+.nav-item.active[data-id="home"] .nav-icon svg,
+.nav-item.animating[data-id="home"] .nav-icon svg {
+  animation: homeJump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes homeJump {
+  0% { transform: translateY(0) scale(1); }
+  35% { transform: translateY(-5px) scale(1.25); }
+  65% { transform: translateY(2px) scale(0.95); }
+  100% { transform: translateY(0) scale(1.15); }
+}
+
+/* داۋاملىق كۆرۈش (Play) - ئالدىغا تۈرتكۈ بېرىش ھەرىكىتى */
+.nav-item.active[data-id="continue"] .nav-icon svg,
+.nav-item.animating[data-id="continue"] .nav-icon svg {
+  animation: playPulse 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes playPulse {
+  0% { transform: scale(1) rotate(0); }
+  35% { transform: scale(1.3) translateX(-2px) rotate(12deg); }
+  70% { transform: scale(0.95) rotate(-4deg); }
+  100% { transform: scale(1.18) rotate(0deg); }
+}
+
+/* كۆرۈش تىزىملىكىم (Plus) - 90 گرادۇس ئايلىنىش ھەرىكىتى */
+.nav-item.active[data-id="mylist"] .nav-icon svg,
+.nav-item.animating[data-id="mylist"] .nav-icon svg {
+  animation: plusSpin 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes plusSpin {
+  0% { transform: rotate(0) scale(1); }
+  60% { transform: rotate(90deg) scale(1.3); }
+  100% { transform: rotate(90deg) scale(1.15); }
+}
+
+/* تىياتىرلار (TV) - ئېكران لەرزىگە كېلىش ھەرىكىتى */
+.nav-item.active[data-id="series"] .nav-icon svg,
+.nav-item.animating[data-id="series"] .nav-icon svg {
+  animation: tvWiggle 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes tvWiggle {
+  0% { transform: scale(1) rotate(0); }
+  25% { transform: scale(1.22) rotate(-8deg); }
+  50% { transform: scale(1.1) rotate(8deg); }
+  75% { transform: scale(1.18) rotate(-4deg); }
+  100% { transform: scale(1.15) rotate(0); }
+}
+
+/* كىنولار (Film) - رەسىمدىكىدەك پىلاستىنكا ئايلىنىش ۋە كېڭىيىش ھەرىكىتى */
+.nav-item.active[data-id="movies"] .nav-icon svg,
+.nav-item.animating[data-id="movies"] .nav-icon svg {
+  animation: filmRoll 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes filmRoll {
+  0% { transform: scale(1) rotate(0); }
+  35% { transform: scale(1.35) rotate(-16deg); }
+  65% { transform: scale(0.92) rotate(8deg); }
+  100% { transform: scale(1.18) rotate(0deg); }
+}
+
+/* ئويۇنلار (Game) - كۇنۇپكا بېسىلىش لەرزىسى */
+.nav-item.active[data-id="games"] .nav-icon svg,
+.nav-item.animating[data-id="games"] .nav-icon svg {
+  animation: gameWobble 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes gameWobble {
+  0% { transform: scale(1) translateY(0); }
+  30% { transform: scale(1.25) translateY(-3px) rotate(-10deg); }
+  60% { transform: scale(1.08) translateY(2px) rotate(10deg); }
+  100% { transform: scale(1.18) translateY(0) rotate(0); }
+}
+
+/* يېڭى كەلگەنلەر (Releases Grid) - تۆت كۋادرات پارقىراپ ئېچىلىش */
+.nav-item.active[data-id="releases"] .nav-icon svg,
+.nav-item.animating[data-id="releases"] .nav-icon svg {
+  animation: gridPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes gridPop {
+  0% { transform: scale(1) rotate(0); }
+  40% { transform: scale(1.3) rotate(45deg); }
+  100% { transform: scale(1.15) rotate(0deg); }
+}
+
+/* ئالقىشلانغانلار (Star) - يۇلتۇز ئايلىنىش پارقىراش ھەرىكىتى */
+.nav-item.active[data-id="popular"] .nav-icon svg,
+.nav-item.animating[data-id="popular"] .nav-icon svg {
+  animation: starTwinkle 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes starTwinkle {
+  0% { transform: scale(1) rotate(0); }
+  45% { transform: scale(1.4) rotate(72deg); }
+  75% { transform: scale(0.9) rotate(36deg); }
+  100% { transform: scale(1.2) rotate(0deg); }
+}
+
+/* تەڭشەك (Settings) - چىشلىق چاق پۈتۈن ئايلىنىش */
+.nav-item.active[data-id="settings"] .nav-icon svg,
+.nav-item.animating[data-id="settings"] .nav-icon svg {
+  animation: gearSpin 0.6s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes gearSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.28); }
+  100% { transform: rotate(360deg) scale(1.15); }
+}
+
+/* چېكىنىش (Logout) - سىيرىلىپ سىرتقا چىقىش ھەرىكىتى */
+.nav-item.active[data-id="logout"] .nav-icon svg,
+.nav-item.animating[data-id="logout"] .nav-icon svg {
+  animation: doorSlide 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes doorSlide {
+  0% { transform: translateX(0); }
+  40% { transform: translateX(-6px) scale(1.2); }
+  100% { transform: translateX(0) scale(1.15); }
+}
+
+.nav-label {
+  flex-grow: 1;
+  white-space: nowrap;
+  line-height: 1.6;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.sidebar-card.collapsed .nav-label {
+  opacity: 0;
+  transform: translateX(10px);
+  pointer-events: none;
+}
+
+/* نىشان سان بەلگىسى (Badge) */
+.nav-badge {
+  background-color: var(--primary-red);
+  color: #ffffff;
+  font-family: var(--font-latin);
+  font-size: 11.5px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+/* ئاكتىپ چۆكمە ھالەتتە بەلگە قىزىل رەڭدە قالىدۇ (رەسىمدىكىدەك) */
+.nav-item.active .nav-badge {
+  background-color: var(--primary-red);
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* قىزىل لەيلىمە نۇسخىسىدا بولسا بەلگە ئاق تەگلىككە ئۆزگىرىدۇ */
+.sidebar-card.theme-red-pill .nav-item.active .nav-badge {
+  background-color: #ffffff;
+  color: var(--primary-red);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-card.collapsed .nav-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  padding: 0;
+  font-size: 0;
+  border: 2px solid var(--card-bg);
+}
+
+/* ئايرىش سىزىقى (Divider) */
+.menu-divider {
+  height: 1px;
+  background-color: var(--divider-color);
+  margin: 10px 8px;
+  transition: background-color var(--transition-fast);
+}
+
+/* چېكىنىش تۈرى ئالاھىدە رەڭ */
+.nav-item.text-danger:hover:not(.active) {
+  color: #dc2626;
+  background-color: rgba(220, 38, 38, 0.08);
+}
+.nav-item.text-danger:hover:not(.active) .nav-icon {
+  color: #dc2626;
+}
+
+/* =========================================================
+   ئاستى قىسىم (Footer Buttons)
+   ========================================================= */
+.sidebar-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--divider-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.footer-action-btn {
+  background: var(--logo-box-bg);
+  border: 1px solid var(--divider-color);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.footer-action-btn:hover {
+  background: var(--item-hover-bg);
+  color: var(--primary-red);
+  transform: translateY(-2px);
+}
+
+.footer-action-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* =========================================================
+   كىچىك ئېكران ۋە تېلېفونلارغا مۇكەممەل ماسلىشىش
+   ========================================================= */
+
+/* كىچىك ئېكران ۋە تېلېفونلارغا مۇكەممەل ماسلىشىش (ئوڭ تەرەپكە توغرىلاش) */
+@media (max-width: 820px) {
+  body {
+    padding: 12px 10px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    direction: rtl;
+  }
+
+  .app-layout {
+    width: auto;
+    margin: 0;
+  }
+  
+  .sidebar-card:not(.collapsed) {
+    width: var(--sidebar-width);
+    max-width: 350px;
+    min-height: calc(100vh - 24px);
+    margin: 0;
+    border-radius: 26px;
+    padding: 20px 14px 16px;
+  }
+  
+  .sidebar-card.collapsed {
+    width: 72px;
+    min-height: calc(100vh - 24px);
+    margin: 0;
+  }
+}
